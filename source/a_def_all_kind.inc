@@ -9,7 +9,7 @@
   
   TYPE acceleration
      integer,pointer :: n,POS,nst 
-     real(dp), pointer :: r, unit_time,de(:),e_in(:)
+     real(dp), pointer :: r,de(:),e_in(:)  !, unit_time
      type(work),pointer :: w1,w2      
      TYPE(FIBRE), pointer :: PREVIOUS    
      TYPE(FIBRE), pointer :: NEXT    
@@ -273,25 +273,25 @@ END  TYPE MONP
 TYPE RCOL
    TYPE(MAGNET_CHART), POINTER :: P
    real(dp) , POINTER :: L   !  collimator of MAD
-   type(MADX_APERTURE), POINTER :: A
+  ! type(MADX_APERTURE), POINTER :: A
 END  TYPE RCOL
 
 TYPE RCOLP
    TYPE(MAGNET_CHART), POINTER :: P
    TYPE(REAL_8) , POINTER ::L
-   type(MADX_APERTURE), POINTER :: A
+ !  type(MADX_APERTURE), POINTER :: A
 END  TYPE RCOLP
 
 TYPE ECOL
    TYPE(MAGNET_CHART), POINTER :: P
    real(dp) , POINTER ::L   !  collimator of MAD
-   type(MADX_APERTURE), POINTER :: A
+ !  type(MADX_APERTURE), POINTER :: A
 END  TYPE ECOL
 
 TYPE ECOLP
    TYPE(MAGNET_CHART), POINTER :: P
    TYPE(REAL_8) , POINTER ::L
-   type(MADX_APERTURE), POINTER :: A
+  ! type(MADX_APERTURE), POINTER :: A
 END  TYPE ECOLP
 
 TYPE ESEPTUM               !

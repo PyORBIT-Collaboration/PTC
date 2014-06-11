@@ -113,7 +113,7 @@ TYPE MAGNET_CHART
    type(magnet_frame), pointer:: f
    type(MADX_APERTURE), pointer:: APERTURE
    type(S_APERTURE), pointer:: A(:)
-   integer,pointer :: charge  ! propagator
+   real(dp),pointer :: charge  ! propagator
    integer,pointer :: dir    ! propagator
    real(dp), POINTER :: BETA0,GAMMA0I,GAMBET,MASS,ag
    real(dp), POINTER :: P0C
@@ -144,7 +144,7 @@ END TYPE tilting
   
   TYPE ramping
      integer,pointer :: n
-     real(dp), pointer :: r, unit_time,t_max    
+     real(dp), pointer :: r,t_max    !, unit_time
      type(time_energy),pointer :: table(:)
      character(255), pointer :: file
   END TYPE ramping
@@ -304,7 +304,7 @@ TYPE FIBRE
    INTEGER,POINTER ::pos              ! POSITION IN LAYOUT
    ! NEW STUFF....
    real(dp), POINTER :: BETA0,GAMMA0I,GAMBET,MASS   !,P0C
-   INTEGER, POINTER :: CHARGE
+   real(dp), POINTER :: CHARGE
    real(dp), POINTER :: AG  ! spin g-2
    ! TO TIE LAYOUTS
    TYPE (FIBRE),POINTER :: P
@@ -333,8 +333,6 @@ TYPE LAYOUT
    type(NODE_LAYOUT), pointer :: T   !  ASSOCIATED  CHILD THIN LENS LAYOUT
    TYPE (MAD_UNIVERSE), POINTER :: parent_universe
    TYPE(layout_array), POINTER :: DNA(:)
-   !   TYPE(siamese_array), POINTER :: girder(:)
-   !   TYPE(junction_array), POINTER :: con2(:)
 END TYPE LAYOUT
 
 type layout_array
@@ -358,16 +356,11 @@ TYPE MAD_UNIVERSE             ! THE MOTHER OF ALL STRUCTURES
 END TYPE MAD_UNIVERSE
 
 TYPE BEAM
-   !   TYPE(REAL_8), POINTER :: Y(:)
    REAL(DP), POINTER :: X(:,:)
-   !   REAL(DP), POINTER :: SIGMA(:),DX(:),BBPAR,ORBIT(:)
    LOGICAL(LP), POINTER :: U(:)
    TYPE(BEAM_LOCATION), POINTER::POS(:)
    INTEGER, POINTER :: N,LOST
    REAL(DP), POINTER :: A(:),D(:)
-   !   INTEGER, POINTER :: CHARGE
-   !   LOGICAL(LP),POINTER :: TIME_INSTEAD_OF_S
-   !   LOGICAL(LP),POINTER :: BEAM_BEAM,BBORBIT
 END TYPE BEAM
 
 TYPE INTEGRATION_NODE
@@ -431,7 +424,7 @@ TYPE ORBIT_LATTICE
    REAL(DP), pointer  ::  ORBIT_gammat    ! GET_GAMMAT
    REAL(DP), pointer  ::  ORBIT_harmonic  ! GET_HARMONIC
    REAL(DP), pointer  ::  ORBIT_L    ! GET_CIRCUMFERENCE
-   INTEGER,pointer ::  ORBIT_CHARGE  ! GET_CHARGE
+   real(dp),pointer ::  ORBIT_CHARGE  ! GET_CHARGE
    REAL(DP), pointer  ::  ORBIT_OMEGA  ! GET_omega
    REAL(DP), pointer  ::  ORBIT_P0C   ! GET_P0C
    REAL(DP), pointer  ::  ORBIT_BETA0 ! GET_BETA0
@@ -445,6 +438,7 @@ TYPE ORBIT_LATTICE
    !   REAL(DP), pointer  ::  freqb,freqa,voltb,volta,phasa,phasb,xs6,dxs6
    TYPE(INTERNAL_STATE),pointer :: STATE
    TYPE(INTEGRATION_NODE), pointer :: tp
+   TYPE(layout), pointer :: parent_layout
    real(dp), pointer :: dt(:)
 END TYPE ORBIT_LATTICE
 
@@ -476,3 +470,11 @@ TYPE fibre_array
    type(fibre), pointer :: p
    integer, pointer :: pos
 END TYPE fibre_array
+
+!!!!  graphical arrays used in Su_hiromi only now
+  real(sp), allocatable :: z_hiromi(:,:),z_hiromi0(:,:)
+  integer n_hiromi,above_kicker,n_hiromi_lost
+  logical(lp) :: fill_hiromi =my_false
+  real(dp) :: r_hiromi=10.0,h_hiromi=10.0,kicker_hiromi=0.4d0,angle_hiromi(3)=0.d0
+  real(dp) :: ent_hiromi(3,3),x0_hiromi(6),t0_hiromi,dt_hiromi
+  type(internal_state) state_hiromi

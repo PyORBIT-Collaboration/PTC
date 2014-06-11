@@ -18,10 +18,12 @@
   !      M_U=>orbit_universe
         
         write (*,*) "=============PTC INIT=====START==========="
-    allocate(m_u)
-    call set_up_universe(m_u)
-    allocate(m_t)
-    call set_up_universe(m_t)
+!    allocate(m_u)
+!    call set_up_universe(m_u)
+!    allocate(m_t)
+!    call set_up_universe(m_t)
+  call ptc_ini_no_append()
+
 !old        allocate(m_u)
 !old        call set_up_universe(m_u)
 !        call APPEND_EMPTY_LAYOUT(m_u)
@@ -31,6 +33,7 @@
           N_CAV4_F=3
           CALL  READ_AND_APPEND_VIRGIN_general(m_u,p_in_file,lmax0=lmax)
 !          call READ_INTO_VIRGIN_LAYOUT(m_u%start,p_in_file,lmax=lmax)
+
 
            file0="pre_orbit_set.txt"
           INQUIRE (FILE = file0, EXIST = exists)
@@ -43,6 +46,7 @@
         call MAKE_NODE_LAYOUT(o_ring)
         if(lmax==zero) then
          write(6,*) " Error lmax = 0 "
+         pause
          stop 777
         endif
 
@@ -136,7 +140,8 @@ CAVITY_TOTALPATH=0
         USE orbit_ptc
         IMPLICIT NONE
         REAL(DP) mass,kin_energy
-        INTEGER charge
+!        real(dp) charge
+         integer charge
 
         call GET_MASS_AMU(mass)
         
@@ -253,7 +258,7 @@ SUBROUTINE ptc_synchronous_after(i_node)
       call print(my_ORBIT_LATTICE%state,6)
       write(6,*) " ********************************************************* "
    else
- !   write(6,*) " ptc_synchronous_after not needed anymore "
+   ! write(6,*) " ptc_synchronous_after not needed anymore "
    endif
 end SUBROUTINE ptc_synchronous_after
 

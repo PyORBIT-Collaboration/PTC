@@ -12,7 +12,7 @@ MODULE S_FIBRE_BUNDLE
   PRIVATE kill_layout,kill_info,alloc_info,copy_info
   private dealloc_fibre,append_fibre   !, alloc_fibre public now also as alloc
   !  private null_it0
-  private move_to_p,move_to_name_old,move_to_nameS,move_to_name_FIRSTNAME
+  private move_to_p,move_to_name_old,move_to_nameS,move_to_name_FIRSTNAME 
   PRIVATE append_EMPTY_FIBRE
   PRIVATE FIND_PATCH_0
   PRIVATE FIND_PATCH_p_new
@@ -26,7 +26,7 @@ MODULE S_FIBRE_BUNDLE
   INTEGER :: INDEX_0=0
   INTEGER :: INDEX_node=0
   logical(lp),PRIVATE,PARAMETER::T=.TRUE.,F=.FALSE.
-  real(dp),target :: eps_pos=c_1d_10
+  real(dp),target :: eps_pos=1e-10_dp
   integer(2),parameter::it0=0,it1=1,it2=2,it3=3,it4=4,it5=5,it6=6,it7=7,it8=8,it9=9
 
   INTERFACE kill
@@ -66,7 +66,7 @@ MODULE S_FIBRE_BUNDLE
      MODULE PROCEDURE move_to_name_old
      MODULE PROCEDURE move_to_nameS
      MODULE PROCEDURE move_to_name_FIRSTNAME
-  END INTERFACE
+   END INTERFACE
 
   INTERFACE FIND_PATCH
      MODULE PROCEDURE FIND_PATCH_0
@@ -92,11 +92,11 @@ CONTAINS
     implicit none
     type(info),target, intent(inout):: c
 
-    allocate(c%s) ;c%s=zero;
-    allocate(c%beta(nsize_info));c%beta=zero;
-    allocate(c%fix(6));c%fix=zero;
-    allocate(c%fix0(6));c%fix0=zero;
-    allocate(c%pos(2));c%pos=zero;
+    allocate(c%s) ;c%s=0.0_dp;
+    allocate(c%beta(nsize_info));c%beta=0.0_dp;
+    allocate(c%fix(6));c%fix=0.0_dp;
+    allocate(c%fix0(6));c%fix0=0.0_dp;
+    allocate(c%pos(2));c%pos=0.0_dp;
 
 
   end SUBROUTINE alloc_info
@@ -266,25 +266,25 @@ CONTAINS
     TYPE (fibre), POINTER :: Current
     TYPE (layout), TARGET,intent(inout):: L
     logical(lp) doneit
-    integer,optional :: charge
+    real(dp),optional :: charge
     real(dp),optional :: muonfactor
     real(dp) mu
-    integer ch
+    real(dp) ch
     CALL LINE_L(L,doneit)
     L%N=L%N+1
     nullify(current)
     call alloc_fibre(current)
     !    if(use_info.and.associated(current%patch)) call copy(el%i,current%i)
     current%dir=1
-    mu=one
+    mu=1.0_dp
     ch=1
     if(present(muonfactor)) mu=muonfactor
     if(present(charge)) ch=charge
     ! OCT 2007
     !        current%P0C=ONE
-    current%BETA0=ONE
-    current%GAMMA0I=ONE
-    current%GAMBET=ZERO
+    current%BETA0=1.0_dp
+    current%GAMMA0I=1.0_dp
+    current%GAMBET=0.0_dp
     current%MASS=mu*pmae
     current%AG=A_particle
     current%CHARGE=ch
@@ -526,18 +526,66 @@ CONTAINS
     endif
   END SUBROUTINE move_to_nameS
 
+ SUBROUTINE move_to_i( L,current,POS) !      move_to_i   ! move to ith fibre
+    implicit none
+    TYPE (fibre), POINTER :: Current
+    TYPE (layout), TARGET, intent(inout):: L
+    integer, intent(inout):: pos
+    integer i
+
+    logical(lp) foundit
+    TYPE (fibre), POINTER :: p
+
+    foundit=.false.
+
+    nullify(p)
+    p=>l%START
+    if(.not.associated(p)) goto 100
+
+    do i=1,l%n
+       if(p%pos==pos) then
+         foundit=my_true
+         exit
+       endif
+       if(l%lastpos>=pos) then
+        p=>p%previous
+       else
+        p=>p%next
+       endif
+       if(.not.associated(p)) goto 100
+    enddo
+100 continue
+    if(foundit) then
+       current=>p
+       l%lastpos=pos
+       l%last=>current
+    else
+       pos=0
+    endif
+  END SUBROUTINE move_to_i
+
 
 
 
   SUBROUTINE Set_Up( L ) ! Sets up a layout: gives a unique negative index
     implicit none
     TYPE (layout),TARGET, INTENT(INOUT):: L
+    type(mad_universe), pointer :: madu
+!  new 2012.9.7
+    nullify(madu)
+   if(associated(L%parent_universe) ) madu=>L%parent_universe
+!    
+
     CALL NULLIFY_LAYOUT(L)
+    
+    if(associated(madu) ) L%parent_universe=>madu
+     nullify(madu)   
+
     ALLOCATE(L%closed);  ALLOCATE(L%lastpos);ALLOCATE(L%NAME);ALLOCATE(L%HARMONIC_NUMBER);
     ALLOCATE(L%NTHIN);ALLOCATE(L%THIN);ALLOCATE(L%INDEX);
     ALLOCATE(L%n);
     L%closed=.false.;
-    L%NTHIN=0;L%THIN=zero;
+    L%NTHIN=0;L%THIN=0.0_dp;
     L%N=0;
     L%lastpos=0;L%NAME='No name assigned';
     INDEX_0=INDEX_0+1
@@ -825,10 +873,10 @@ CONTAINS
     CALL ALLOCATE_DATA_FIBRE(C)
     c%DIR=1
     !    C%P0C = ONE
-    C%BETA0 = ONE
-    C%GAMMA0I = ONE
-    C%GAMBET = ONE
-    C%MASS = ONE
+    C%BETA0 = 1.0_dp
+    C%GAMMA0I = 1.0_dp
+    C%GAMBET = 1.0_dp
+    C%MASS = 1.0_dp
     C%MASS = A_particle
     C%CHARGE = 1
 
@@ -850,10 +898,10 @@ CONTAINS
     if(i==0) then
        c%DIR=1
        !    C%P0C = ONE
-       C%BETA0 = ONE
-       C%GAMMA0I = ONE
-       C%GAMBET = ONE
-       C%MASS = ONE
+       C%BETA0 = 1.0_dp
+       C%GAMMA0I = 1.0_dp
+       C%GAMBET = 1.0_dp
+       C%MASS = 1.0_dp
        C%ag = a_particle
        C%CHARGE = 1
        !       c%P0C=zero
@@ -960,10 +1008,10 @@ CONTAINS
     if(i==0) then
        c%DIR=1
        !    C%P0C = ONE
-       C%BETA0 = ONE
-       C%GAMMA0I = ONE
-       C%GAMBET = ONE
-       C%MASS = ONE
+       C%BETA0 = 1.0_dp
+       C%GAMMA0I = 1.0_dp
+       C%GAMBET = 1.0_dp
+       C%MASS = 1.0_dp
        C%ag = a_particle
        C%CHARGE = 1
        !       c%P0C=zero
@@ -1095,12 +1143,12 @@ CONTAINS
     REAL(DP) NORM,pix(3)
 
     PATCH_NEEDED=0
-    pix=zero
+    pix=0.0_dp
     pix(1)=pi
     DIR=1
     DISCRETE=.FALSE.
-    ANG=ZERO
-    D=ZERO
+    ANG=0.0_dp
+    D=0.0_dp
 
     IF(PRESENT(EL2_NEXT)) THEN
        EL2=>EL2_NEXT
@@ -1151,21 +1199,21 @@ CONTAINS
 
     CALL FIND_PATCH(B,EXI,A,ENT,D,ANG)
 
-    NORM=ZERO
+    NORM=0.0_dp
     DO I=1,3
        NORM=NORM+ABS(D(I))
     ENDDO
     IF(NORM>=PREC) THEN
-       D=ZERO
+       D=0.0_dp
        PATCH_NEEDED=PATCH_NEEDED+1
     ENDIF
-    NORM=ZERO
+    NORM=0.0_dp
     DO I=1,3
        NORM=NORM+ABS(ANG(I))
     ENDDO
     ene=(NORM<=PREC.and.(A_XZ==1.and.A_YZ==1)).or.(NORM<=PREC.and.(A_XZ==-1.and.A_YZ==-1))
     IF(.not.ene) THEN
-       ANG=ZERO
+       ANG=0.0_dp
        PATCH_NEEDED=PATCH_NEEDED+10
     ENDIF
 
@@ -1174,16 +1222,16 @@ CONTAINS
 
 
     DISCRETE=.false.
-    IF(ANG(1)/TWOPI<-c_0_25) THEN
+    IF(ANG(1)/TWOPI<-0.25_dp) THEN
        DISCRETE=.TRUE.
     ENDIF
-    IF(ANG(1)/TWOPI>c_0_25) THEN
+    IF(ANG(1)/TWOPI>0.25_dp) THEN
        DISCRETE=.TRUE.
     ENDIF
-    IF(ANG(2)/TWOPI<-c_0_25) THEN
+    IF(ANG(2)/TWOPI<-0.25_dp) THEN
        DISCRETE=.TRUE.
     ENDIF
-    IF(ANG(1)/TWOPI>c_0_25) THEN
+    IF(ANG(1)/TWOPI>0.25_dp) THEN
        DISCRETE=.TRUE.
     ENDIF
 
@@ -1246,7 +1294,7 @@ CONTAINS
     INTEGER LOC,I,PATCH_NEEDED
     REAL(DP) NORM,pix(3)
     PATCH_NEEDED=1
-    pix=zero
+    pix=0.0_dp
     pix(1)=pi
 
     DISCRETE=.FALSE.
@@ -1308,23 +1356,23 @@ CONTAINS
        CALL FIND_PATCH(B,EXI,A,ENT,D,ANG)
 
        IF(PRESENT(PREC)) THEN
-          NORM=ZERO
+          NORM=0.0_dp
           DO I=1,3
              NORM=NORM+ABS(D(I))
           ENDDO
           IF(NORM<=PREC) THEN
-             D=ZERO
+             D=0.0_dp
              PATCH_NEEDED=PATCH_NEEDED+1
           ENDIF
-          NORM=ZERO
+          NORM=0.0_dp
           DO I=1,3
              NORM=NORM+ABS(ANG(I))
           ENDDO
           IF(NORM<=PREC.and.(A_XZ==1.and.A_YZ==1)) THEN
-             ANG=ZERO
+             ANG=0.0_dp
              PATCH_NEEDED=PATCH_NEEDED+1
           ELSEIF(NORM<=PREC.and.(A_XZ==-1.and.A_YZ==-1)) THEN  ! added 2008.6.18
-             ANG=ZERO
+             ANG=0.0_dp
              PATCH_NEEDED=PATCH_NEEDED+1
           ENDIF
           IF(PATCH_NEEDED==3) THEN
@@ -1433,16 +1481,16 @@ CONTAINS
     ENDIF
 
     DISCRETE=.false.
-    IF(ANG(1)/TWOPI<-c_0_25) THEN
+    IF(ANG(1)/TWOPI<-0.25_dp) THEN
        DISCRETE=.TRUE.
     ENDIF
-    IF(ANG(1)/TWOPI>c_0_25) THEN
+    IF(ANG(1)/TWOPI>0.25_dp) THEN
        DISCRETE=.TRUE.
     ENDIF
-    IF(ANG(2)/TWOPI<-c_0_25) THEN
+    IF(ANG(2)/TWOPI<-0.25_dp) THEN
        DISCRETE=.TRUE.
     ENDIF
-    IF(ANG(1)/TWOPI>c_0_25) THEN
+    IF(ANG(1)/TWOPI>0.25_dp) THEN
        DISCRETE=.TRUE.
     ENDIF
 
@@ -1490,15 +1538,15 @@ CONTAINS
     
     el1%PATCH%B_X1=1
     el1%PATCH%B_X2=1
-    el1%PATCH%B_D=zero
-    el1%PATCH%B_ANG=zero
-    el1%PATCH%B_T=zero
+    el1%PATCH%B_D=0.0_dp
+    el1%PATCH%B_ANG=0.0_dp
+    el1%PATCH%B_T=0.0_dp
 
     EL2%PATCH%A_X1=1
     EL2%PATCH%A_X2=1
-    EL2%PATCH%A_D=zero
-    EL2%PATCH%A_ANG=zero
-    EL2%PATCH%A_T=zero
+    EL2%PATCH%A_D=0.0_dp
+    EL2%PATCH%A_ANG=0.0_dp
+    EL2%PATCH%A_T=0.0_dp
 
     if(el1%PATCH%patch==3) then
        el1%PATCH%patch=1
@@ -1543,7 +1591,7 @@ CONTAINS
        if(ABS((EL2%MAG%P%P0C-EL1%MAG%P%P0C)/EL1%MAG%P%P0C)>eps_fitted) ENE=.TRUE.
     endif
     DIR=-1  ; IF(NEX) DIR=1;
-    D=ZERO;ANG=ZERO;
+    D=0.0_dp;ANG=0.0_dp;
 
     CALL FIND_PATCH_P_new(EL1,EL2,D,ANG,DIR,ENERGY_PATCH=ENE,prec=PREC)
 
@@ -1605,6 +1653,67 @@ CONTAINS
     call de_Set_Up_UNIVERSE(L)
   END SUBROUTINE kill_UNIVERSE
 
+  SUBROUTINE kill_layout_in_universe( L )  ! Destroys a layout
+    implicit none
+    TYPE (LAYOUT), POINTER :: L,C1,c2
+    TYPE (MAD_UNIVERSE), pointer ::  u
+
+   if(.not.associated(l)) then
+      write(6,*) " There is nothing to kill "
+      return
+    endif
+
+
+     u=>l%parent_universe    
+     
+     if(u%nf/=0) then
+      write(6,*) " You cannot kill a layout in a tied Universe "
+      return
+     endif
+
+    if(associated(u%start,u%end)) then
+     call kill_layout(u%start)
+     call de_Set_Up_UNIVERSE(u)
+     call Set_Up_UNIVERSE(u)
+   !  write(6,*) " 1 "
+     return
+    elseif(u%n==2) then
+       if(associated(l,u%start)) then
+        call kill_layout(L)
+        u%start=>u%end
+   !  write(6,*) " start 2"
+       else
+        call kill_layout(L)
+        u%end=>u%start
+       endif
+      u%n=1
+   !   write(6,*) " end 2"
+      return
+    endif
+
+       if(associated(l,u%start)) then
+        C1=>l%next
+        call kill_layout(L)
+        u%start=>c1
+     !    write(6,*) " start >2"
+       elseif (associated(l,u%end)) then
+        C1=>l%previous
+        call kill_layout(L)
+        u%end=>c1
+     !    write(6,*) " end >2"
+       else
+        C1=>l%previous
+        C2=>l%next
+        call kill_layout(L)
+        c1%next=>c2
+        c2%previous=>c1        
+     !    write(6,*) " middle >2"
+
+      endif
+
+      u%n=u%n-1
+  END SUBROUTINE kill_layout_in_universe
+
   SUBROUTINE FIND_POS_in_universe(C,i )  ! Finds the location "i" of the fibre C in layout L
     implicit none
     INTEGER, INTENT(INOUT) :: I
@@ -1636,6 +1745,7 @@ CONTAINS
        STOP 900
     ENDIF
   END SUBROUTINE MOVE_TO_LAYOUT_I
+
 
   SUBROUTINE MOVE_TO_LAYOUT_name( L,current,name ) ! Moves current to the i^th position
     implicit none
@@ -1736,14 +1846,25 @@ CONTAINS
     TYPE (fibre), POINTER :: C
     TYPE (fibre), POINTER :: P
     NULLIFY(P);
-    P=>C
-    !    CALL LINE_L(L,doneit)  ! TGV
 
-    DO WHILE(.NOT.ASSOCIATED(P,L%START))
+    !    CALL LINE_L(L,doneit)  ! TGV
+    I=0
+    IF(ASSOCIATED(C,L%START)) THEN
+     I=1
+     RETURN
+    ENDIF
+    P=>L%start%NEXT
+    I=2
+    DO WHILE(.NOT.ASSOCIATED(P,C))
        I=I+1
-       P=>P%PREVIOUS
+       P=>P%NEXT
+       if(i>1000000) then
+        write(6,*) " not found in FIND_POS_in_layout "
+        i=0
+        exit
+       endif
     ENDDO
-    I=I+1
+
     !    CALL RING_L(L,doneit)
   END SUBROUTINE FIND_POS_in_layout
 
@@ -1787,18 +1908,7 @@ CONTAINS
        if(associated(c0,c)) exit
     enddo
     write(6,*) "universe has ",k," fibres"
-    k=0
-    l=>m_u%start
 
-    k=0
-    c0=>l%start
-    c=>l%start
-    do while(.true.)
-       k=k+1
-       c=>c%P
-       if(associated(c0,c)) exit
-    enddo
-    write(6,*) "universe has ",k," fibres"
   end  SUBROUTINE unify_mad_universe
 
   SUBROUTINE TIE_MAD_UNIVERSE(M_U,N)
@@ -1841,6 +1951,40 @@ CONTAINS
     m_u%last=>m_u%start%start
     m_u%lastpos=1
   end SUBROUTINE TIE_MAD_UNIVERSE
+
+  subroutine gUniverse_max_n(u,n)
+    !use build_lattice
+    implicit none
+    integer n,i
+    type(mad_universe), target :: u
+    type(layout), pointer :: L
+    n=0
+
+    l=>u%start
+    do i=1,u%n
+       n=n+l%n
+       l=>l%next
+    enddo
+
+  end subroutine gUniverse_max_n
+
+
+  subroutine gUniverse_max_node_n(u,n)
+    !use build_lattice
+    implicit none
+    integer n,i
+    type(mad_universe), target :: u
+    type(layout), pointer :: L
+    n=0
+
+    l=>u%start
+    do i=1,u%n
+       if(associated(l%t) ) n=n+l%t%n
+       l=>l%next
+    enddo
+
+  end subroutine gUniverse_max_node_n
+
 
   SUBROUTINE move_to_name( m_u,current,name,pos,next)
     ! moves to next one in list called name in tied universe
@@ -1954,10 +2098,10 @@ CONTAINS
     ALLOCATE(CURRENT%delta_rad_out)
     ALLOCATE(CURRENT%ref(4))
     CURRENT%lost=0
-    CURRENT%ref=zero
-    CURRENT%delta_rad_in=zero
-    CURRENT%delta_rad_out=zero
-    CURRENT%ds_ac=zero
+    CURRENT%ref=0.0_dp
+    CURRENT%delta_rad_in=0.0_dp
+    CURRENT%delta_rad_out=0.0_dp
+    CURRENT%ds_ac=0.0_dp
     !    ALLOCATE(CURRENT%ORBIT(6))
     ALLOCATE(CURRENT%pos_in_fibre)
     ALLOCATE(CURRENT%pos)
@@ -2060,9 +2204,9 @@ CONTAINS
        IF(.NOT.ASSOCIATED(CURRENT%A)) THEN
           ALLOCATE(CURRENT%A(3),CURRENT%ENT(3,3))
           ALLOCATE(CURRENT%B(3),CURRENT%EXI(3,3))
-          CURRENT%A=ZERO
+          CURRENT%A=0.0_dp
           CURRENT%ENT=GLOBAL_FRAME
-          CURRENT%B=ZERO
+          CURRENT%B=0.0_dp
           CURRENT%EXI=GLOBAL_FRAME
        ENDIF
        Current=>CURRENT%NEXT
@@ -2105,7 +2249,7 @@ CONTAINS
     IMPLICIT NONE
  !!! maybe missing per Sagan 2012.3.18       
   ! TYPE(INTEGRATION_NODE), TARGET, INTENT(INOUT) :: T
-   TYPE(INTEGRATION_NODE), pointer, INTENT(INOUT) :: T
+   TYPE(INTEGRATION_NODE), pointer :: T
 !!! maybe missing per Sagan 2012.3.18       
  
     !    IF(ASSOCIATED(T%bb)) then
@@ -2236,7 +2380,7 @@ CONTAINS
     ALLOCATE(ORBIT_LAYOUT_node%PTC_TASK)
     ALLOCATE(ORBIT_LAYOUT_node%CAVITY)
 
-    ORBIT_LAYOUT_node%LATTICE(1:NL)=ZERO
+    ORBIT_LAYOUT_node%LATTICE(1:NL)=0.0_dp
     ORBIT_LAYOUT_node%DPOS=0
     ORBIT_LAYOUT_node%ENTERING_TASK=0
     ORBIT_LAYOUT_node%PTC_TASK=0
@@ -2256,28 +2400,29 @@ CONTAINS
        ALLOCATE(O%ORBIT_N_NODE);O%ORBIT_N_NODE=N
        ALLOCATE(O%ORBIT_USE_ORBIT_UNITS);O%ORBIT_USE_ORBIT_UNITS=U
        ALLOCATE(O%ORBIT_WARNING);O%ORBIT_WARNING=0
-       ALLOCATE(O%ORBIT_OMEGA);O%ORBIT_OMEGA=ONE
-       ALLOCATE(O%ORBIT_P0C);O%ORBIT_P0C=ONE
-       ALLOCATE(O%ORBIT_BETA0);O%ORBIT_BETA0=ONE
-       ALLOCATE(O%ORBIT_LMAX);O%ORBIT_LMAX=ZERO
-       ALLOCATE(O%orbit_kinetic);O%orbit_kinetic=ZERO
-       ALLOCATE(O%ORBIT_MAX_PATCH_TZ);O%ORBIT_MAX_PATCH_TZ=ZERO
-       ALLOCATE(O%ORBIT_mass_in_amu);O%ORBIT_mass_in_amu=ZERO
-       ALLOCATE(O%ORBIT_gammat);O%ORBIT_gammat=ZERO
-       ALLOCATE(O%ORBIT_L);O%ORBIT_L=ZERO
-       ALLOCATE(O%ORBIT_harmonic);O%ORBIT_harmonic=ONE
+       ALLOCATE(O%ORBIT_OMEGA);O%ORBIT_OMEGA=1.0_dp
+       ALLOCATE(O%ORBIT_P0C);O%ORBIT_P0C=1.0_dp
+       ALLOCATE(O%ORBIT_BETA0);O%ORBIT_BETA0=1.0_dp
+       ALLOCATE(O%ORBIT_LMAX);O%ORBIT_LMAX=0.0_dp
+       ALLOCATE(O%orbit_kinetic);O%orbit_kinetic=0.0_dp
+       ALLOCATE(O%ORBIT_MAX_PATCH_TZ);O%ORBIT_MAX_PATCH_TZ=0.0_dp
+       ALLOCATE(O%ORBIT_mass_in_amu);O%ORBIT_mass_in_amu=0.0_dp
+       ALLOCATE(O%ORBIT_gammat);O%ORBIT_gammat=0.0_dp
+       ALLOCATE(O%ORBIT_L);O%ORBIT_L=0.0_dp
+       ALLOCATE(O%ORBIT_harmonic);O%ORBIT_harmonic=1.0_dp
        ALLOCATE(O%ORBIT_CHARGE);O%ORBIT_CHARGE=1
        ALLOCATE(O%STATE);O%STATE=DEFAULT
-       ALLOCATE(O%orbit_brho);O%orbit_brho=one
-       ALLOCATE(O%orbit_energy);O%orbit_energy=zero;
-       ALLOCATE(O%orbit_gamma);O%orbit_gamma=zero;
+       ALLOCATE(O%orbit_brho);O%orbit_brho=1.0_dp
+       ALLOCATE(O%orbit_energy);O%orbit_energy=0.0_dp;
+       ALLOCATE(O%orbit_gamma);O%orbit_gamma=0.0_dp;
        !    ALLOCATE(O%orbit_dppfac);O%orbit_dppfac=zero;
-       ALLOCATE(O%orbit_deltae);O%orbit_deltae=zero;
-       ALLOCATE(O%ORBIT_OMEGA_after);O%ORBIT_OMEGA_after=one
+       ALLOCATE(O%orbit_deltae);O%orbit_deltae=0.0_dp;
+       ALLOCATE(O%ORBIT_OMEGA_after);O%ORBIT_OMEGA_after=1.0_dp
        !    ALLOCATE(O%dxs6,O%xs6,O%freqb,O%freqa,O%voltb,O%volta,O%phasa,O%phasb)
        ALLOCATE(O%accel);
        nullify(O%dt);
        nullify(O%tp);
+       nullify(O%parent_layout);
        !    O%freqb=zero
        !    O%freqa=zero
        !    O%voltb=zero
@@ -2379,17 +2524,17 @@ CONTAINS
     !    B%beta0=one
     !    B%mid=global_frame
     !    B%o=zero
-    B%A=zero
-    B%D=zero
-    B%bbk=zero
-    B%SX=one
-    B%Sy=one
-    B%XM=zero
-    B%YM=zero
+    B%A=0.0_dp
+    B%D=0.0_dp
+    B%bbk=0.0_dp
+    B%SX=1.0_dp
+    B%Sy=1.0_dp
+    B%XM=0.0_dp
+    B%YM=0.0_dp
     !    B%DS=ZERO
-    B%S=zero
+    B%S=0.0_dp
     !    B%DPOS=0
-    B%FK=ZERO
+    B%FK=0.0_dp
   END SUBROUTINE ALLOC_BEAM_BEAM_NODE
 
   SUBROUTINE KILL_BEAM_BEAM_NODE(B)
@@ -2414,7 +2559,7 @@ CONTAINS
     DEALLOCATE(B%A_X2)
     DEALLOCATE(B%PATCH)
 
-    DEALLOCATE(B)
+  !  DEALLOCATE(B)
 
   END SUBROUTINE KILL_BEAM_BEAM_NODE
 

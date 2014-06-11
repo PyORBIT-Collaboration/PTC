@@ -1,5 +1,8 @@
 include ../../conf/make_root_config
 
+#Fortran compiler
+FC=ifort
+
 DIRS  = $(patsubst %/, %, $(filter %/, $(shell ls -F))))
 SRCS  = $(wildcard *.cc)
 SRCS += $(foreach dir, $(DIRS), $(patsubst $(dir)/%.cc, %.cc, $(wildcard $(dir)/*.cc)))
@@ -30,7 +33,12 @@ INC += $(foreach dir, $(DIRS), $(wildcard ./$(dir)/*.h))
 # External library locations
 #-------------------------------------------------------------------------------
 
-LIBS += -L/usr/lib/gcc/x86_64-redhat-linux/4.4.4/ -lgfortran
+ifeq ($(FC),ifort)
+  LIBS += -Lafs/cern.ch/sw/IntelSoftware/linux/x86_64/xe2013/composer_xe_2013_sp1.2.144/bin/intel64 -lifcore -lsvml
+endif
+ifeq ($(FC),gfortran)
+  LIBS += -L/usr/lib/gcc/x86_64-redhat-linux/4.4.4 -lgfortran
+endif
 
 #-------------------------------------------------------------------------------
 # External 'include' locations
@@ -90,32 +98,42 @@ clean:
 	$(CXX) $(CXXFLAGS) $(INCLUDES_LOCAL) $(INCLUDES) -c $< -o $@;
 
 ./obj/%.o : ./source/%.f90
-	gfortran -fpic -c $< -o $@;
+	$(FC) -fpic -O4 -c $< -o $@;
 
 ./obj/%.o : ./interface/%.f90
-	gfortran -fpic -I ./source -c $< -o $@;
+	$(FC) -fpic -O4 -I ./source -c $< -o $@;
 
-./obj/Sma_multiparticle.o: ./obj/Sm_tracking.o
-./obj/pointers.o : ./obj/Sp_keywords.o
-./obj/Sp_keywords.o : ./obj/So_fitting.o
-./obj/So_fitting.o : ./obj/Sn_mad_like.o
-./obj/Sn_mad_like.o : ./obj/Sma_multiparticle.o
-./obj/Sm_tracking.o : ./obj/Sl_family.o
-./obj/Sl_family.o : ./obj/Sk_link_list.o
-./obj/Sk_link_list.o :  ./obj/Si_def_element.o
-./obj/Si_def_element.o : ./obj/Sh_def_kind.o
-./obj/Sh_def_kind.o : ./obj/Sf_def_all_kinds.o
-./obj/Sf_def_all_kinds.o : ./obj/Se_status.o
-./obj/Se_status.o : ./obj/Sd_frame.o
-./obj/Sd_frame.o : ./obj/Sc_euclidean.o
-./obj/Sc_euclidean.o : ./obj/Sa_extend_poly.o
-./obj/Se_status.o : ./obj/Sb_sagan_pol_arbitrary.o
-./obj/Si_def_element.o : ./obj/Sg_sagan_wiggler.o
-./obj/my_fortran_catia.o : ./obj/zzy_run_madx.o  ./obj/Spc_pointers.o
-./obj/zzy_run_madx.o :  ./obj/Spa_fake_mad.o
-./obj/Spa_fake_mad.o :  ./obj/Sp_keywords.o
-./obj/Sa_extend_poly.o : ./obj/o_tree_element.o
-./obj/o_tree_element.o : ./obj/n_complex_polymorph.o
-./obj/Sqa_beam_beam_ptc.o : ./obj/Sq_orbit_ptc.o
-./obj/Sma0_beam_beam_ptc.o : ./obj/Sm_tracking.o
-./obj/Sra_fitting.o : ./obj/Sr_spin.o
+obj/b_da_arrays_all.o: obj/a_scratch_size.o
+obj/c_dabnew.o: obj/b_da_arrays_all.o
+obj/d_lielib.o: obj/c_dabnew.o
+obj/h_definition.o: obj/d_lielib.o
+obj/i_tpsa.o: obj/h_definition.o
+obj/j_tpsalie.o: obj/i_tpsa.o
+obj/k_tpsalie_analysis.o: obj/j_tpsalie.o
+obj/l_complex_taylor.o: obj/k_tpsalie_analysis.o
+obj/m_real_polymorph.o: obj/l_complex_taylor.o
+obj/n_complex_polymorph.o: obj/m_real_polymorph.o
+obj/o_tree_element.o: obj/n_complex_polymorph.o
+obj/Sa_extend_poly.o: obj/o_tree_element.o
+obj/Sb_sagan_pol_arbitrary.o: obj/Sa_extend_poly.o
+obj/Sc_euclidean.o: obj/Sb_sagan_pol_arbitrary.o
+obj/Sd_frame.o: obj/Sc_euclidean.o
+obj/Se_status.o: obj/Sd_frame.o
+obj/Sf_def_all_kinds.o: obj/Se_status.o
+obj/Sg_sagan_wiggler.o: obj/Sf_def_all_kinds.o
+obj/Sh_def_kind.o: obj/Sg_sagan_wiggler.o
+obj/Si_def_element.o: obj/Sh_def_kind.o
+obj/Sk_link_list.o: obj/Si_def_element.o
+obj/Sl_family.o: obj/Sk_link_list.o
+obj/Sm_tracking.o: obj/Sl_family.o
+obj/Sma0_beam_beam_ptc.o: obj/Sm_tracking.o
+obj/Sma_multiparticle.o: obj/Sma0_beam_beam_ptc.o
+obj/Sn_mad_like.o: obj/Sma_multiparticle.o
+obj/So_fitting.o: obj/Sn_mad_like.o
+obj/Sp_keywords.o: obj/So_fitting.o
+obj/Sq_orbit_ptc.o: obj/Sp_keywords.o
+obj/Sr_spin.o: obj/Sq_orbit_ptc.o
+obj/Sra_fitting.o: obj/Sr_spin.o
+obj/Ss_fake_mad.o: obj/Sra_fitting.o
+obj/St_pointers.o: obj/Ss_fake_mad.o
+obj/ptcinterface.o: obj/St_pointers.o
