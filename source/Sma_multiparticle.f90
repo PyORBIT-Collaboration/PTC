@@ -826,11 +826,12 @@ CONTAINS
     !    endif
 
     if(abs(x(1))+abs(x(3))>absolute_aperture) then
-       messageLOST="exceed absolute_aperture in TRACKV_NODE_SINGLE"
+       messageLOST="Sma_multiparticle.f90 TRACKV_NODE_SINGLE : exceed absolute_aperture in TRACKV_NODE_SINGLE"
        lost_node=>t
        lost_fibre=>t%parent_fibre
        xlost=x
        CHECK_STABLE=.false.
+      
     endif
 
     x=V%X
@@ -892,11 +893,12 @@ CONTAINS
     !    endif
 
     if(abs(x(1))+abs(x(3))>absolute_aperture) then   !.or.(.not.CHECK_MADX_APERTURE)) then
-       messageLOST="exceed absolute_aperture in TRACKR_NODE_SINGLE"
+       messageLOST="Sma_multiparticle.f90 TRACKR_NODE_SINGLE : exceed absolute_aperture in TRACKR_NODE_SINGLE"
        lost_node=>t
        lost_fibre=>t%parent_fibre
        xlost=x
        CHECK_STABLE=.false.
+       
     endif
 
 
@@ -907,7 +909,7 @@ CONTAINS
     T%PARENT_FIBRE%MAG%P%GAMBET=>T%PARENT_FIBRE%GAMBET
     T%PARENT_FIBRE%MAG%P%MASS=>T%PARENT_FIBRE%MASS
     T%PARENT_FIBRE%MAG%P%CHARGE=>T%PARENT_FIBRE%CHARGE
-
+       el=>T%PARENT_FIBRE%MAG
 
     !call cpu_time(ttime1)
 
@@ -922,7 +924,7 @@ CONTAINS
        CALL TRACK_FIBRE_BACK(T%PARENT_FIBRE,X,K)
 
     CASE(CASE1,CASE2)
-       el=>T%PARENT_FIBRE%MAG
+  !     el=>T%PARENT_FIBRE%MAG
        if(s_aperture_CHECK.and.associated(el%p%A).AND.CHECK_MADX_APERTURE.and.t%cas==case2) &
             call check_S_APERTURE_out(el%p,t%POS_IN_FIBRE-2,x)
 
@@ -963,7 +965,7 @@ CONTAINS
        END SELECT
 
     CASE(CASE0)
-       el=>T%PARENT_FIBRE%MAG
+ !      el=>T%PARENT_FIBRE%MAG
        if(s_aperture_CHECK.and.associated(el%p%A).AND.CHECK_MADX_APERTURE)  &
             call check_S_APERTURE(el%p,t%POS_IN_FIBRE-2,x)
        if(associated(t%bb).and.dobb.and.do_beam_beam) then
@@ -1070,11 +1072,12 @@ CONTAINS
     !    endif
 
     if(abs(x(1))+abs(x(3))>absolute_aperture) then
-       messageLOST="exceed absolute_aperture in TRACKP_NODE_SINGLE"
+       messageLOST="Sma_multiparticle.f90 TRACKP_NODE_SINGLE : exceed absolute_aperture in TRACKP_NODE_SINGLE"
        lost_node=>t
        lost_fibre=>t%parent_fibre
        xlost=x
        CHECK_STABLE=.false.
+       
     endif
 
     !   T%PARENT_FIBRE%MAGP=K
@@ -1086,7 +1089,7 @@ CONTAINS
     T%PARENT_FIBRE%MAGP%P%GAMBET=>T%PARENT_FIBRE%GAMBET
     T%PARENT_FIBRE%MAGP%P%MASS=>T%PARENT_FIBRE%MASS
     T%PARENT_FIBRE%MAGP%P%CHARGE=>T%PARENT_FIBRE%CHARGE
-
+       el=>T%PARENT_FIBRE%MAGP
 
 
     SELECT CASE(T%CAS)
@@ -1100,7 +1103,7 @@ CONTAINS
        CALL TRACK_FIBRE_BACK(T%PARENT_FIBRE,X,K)
 
     CASE(CASE1,CASE2)
-       el=>T%PARENT_FIBRE%MAGP
+!       el=>T%PARENT_FIBRE%MAGP
        if(s_aperture_CHECK.and.associated(el%p%A).AND.CHECK_MADX_APERTURE.and.t%cas==case2) &
             call check_S_APERTURE_out(el%p,t%POS_IN_FIBRE-2,x)
 
@@ -1142,7 +1145,7 @@ CONTAINS
        END SELECT
 
     CASE(CASE0)
-       el=>T%PARENT_FIBRE%MAGP
+ !      el=>T%PARENT_FIBRE%MAGP
        if(s_aperture_CHECK.and.associated(el%p%A).AND.CHECK_MADX_APERTURE) &
             call check_S_APERTURE(el%p,t%POS_IN_FIBRE-2,x)
        if(associated(t%bb).and.dobb.and.do_beam_beam) then

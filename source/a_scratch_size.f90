@@ -184,6 +184,7 @@ module precision_constants
   logical  :: default_tpsa=.false.
   logical, target :: lingyun_yang=.false.
   integer, target :: last_tpsa=0
+  integer, target :: c_last_tpsa=0
   integer :: mf_herd=0
   character*255 :: print_herd="PRINT_HERD.TXT"
   character*255 :: initial_setting="FINAL_SETTINGS.TXT"
@@ -201,6 +202,7 @@ module precision_constants
   logical(lp) :: change_sector=my_true
   real(dp) :: xlost(6)=0.0_dp
   character(255) :: messagelost
+  
   !  logical(lp) :: fixed_found
   !  lielib_print(1)=1   lieinit prints info
   !  lielib_print(2)=1   expflo warning if no convergence
@@ -341,6 +343,26 @@ module precision_constants
 
 contains
 
+ real(dp) function bran(xran)
+    implicit none
+    !     ************************************
+    !
+    !     VERY SIMPLE RANDOM NUMBER GENERATOR
+    !
+    !-----------------------------------------------------------------------------
+    !
+    real(dp) xran
+    !
+    xran = xran + 10.0_dp
+    if(xran.gt.1e4_dp) xran = xran - 9999.12345e0_dp
+    bran = abs(sin(xran))
+    bran = 10*bran
+    bran = bran - int(bran)
+    !      IF(BRAN.LT. c_0_1) BRAN = BRAN + c_0_1
+    !
+    return
+  end function bran
+
   function mat_norm(m)
     implicit none
     real(dp) mat_norm
@@ -365,6 +387,7 @@ contains
        IF(ABS(S1(I))>C_%ABSOLUTE_APERTURE) THEN
           S1=PUNY
           C_%CHECK_STABLE=.FALSE.
+          messagelost="a_scratch_size.f90 check_stability: aperture"
           EXIT
        ENDIF
     ENDDO
@@ -579,11 +602,13 @@ contains
     IF((ABS(X)>1.0_dp).AND.c_%ROOT_CHECK) THEN
        ARCCOS_lielib=0.0_dp
        c_%CHECK_STABLE=.FALSE.
+       messagelost="a_scratch_size.f90 ARCCOS_lielib: abs(x)>1"
     ELSEIF(ABS(X)<=1.0_dp) THEN
        ARCCOS_lielib=ACOS(X)
     ELSE      !  IF X IS NOT A NUMBER
        ARCCOS_lielib=0.0_dp
        c_%CHECK_STABLE=.FALSE.
+       messagelost="a_scratch_size.f90 ARCCOS_lielib: abs(x)>1"
     ENDIF
 
   END FUNCTION ARCCOS_lielib
@@ -599,6 +624,7 @@ contains
     IF(X<=0.0_dp.AND.c_%ROOT_CHECK) THEN
        LOGE_lielib=0.0_dp
        c_%CHECK_STABLE=.FALSE.
+       messagelost="a_scratch_size.f90 LOGE_lielib: x<0"
     ELSE
        LOGE_lielib=LOG(X)
     ENDIF
@@ -611,7 +637,8 @@ end module precision_constants
 module scratch_size
   implicit none
   public
-  integer,parameter::ndumt=10                   !  Number of scratch level
+  integer,parameter::ndumt=10 
+  integer,parameter::c_ndumt=10                   !  Number of scratch level
 end module scratch_size
 
 module file_handler

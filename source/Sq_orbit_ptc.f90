@@ -420,7 +420,7 @@ contains
   SUBROUTINE ORBIT_TRACK_NODE_Standard_R(K,X,STATE)
     IMPLICIT NONE
     REAL(DP),  INTENT(INOUT) :: X(6)
-    INTEGER K,I,j
+    INTEGER K,I
     LOGICAL(LP) U,cav
     REAL(DP) X5,dt,dt_orbit_sync
     TYPE(INTEGRATION_NODE), POINTER  :: T
@@ -495,11 +495,10 @@ contains
        if(.not.CHECK_STABLE) then
           CALL RESET_APERTURE_FLAG
           u=my_true
+! EB - comment by Elena Benedetto - Only the 4 transverse coordinates are multiplied by xbig, 
+! to avoid loosing the information on the phase (when the mod 2pi is taken)
          ! x(1)=XBIG
-         ! x=x*xbig
-           do j=1,4
-              x(j)=x(j)*xbig
-           enddo
+          x(1:4) =x(1:4)*XBIG
           if(wherelost==1) then
              t%lost=t%lost+1
           endif
@@ -1152,11 +1151,12 @@ contains
        if(.not.CHECK_STABLE) then
           !          CALL RESET_APERTURE_FLAG
           u=my_true
+! EB - comment by Elena Benedetto - Only the 4 transverse coordinates are multiplied by xbig, 
+! to avoid loosing the information on the phase (when the mod 2pi is taken)
         !  x(1)=XBIG
-        !do j=1,6
-        do j=1,4
-          x(j)=x(j)*xbig
-        enddo
+          do j=1,4
+            x(j)=x(j)*XBIG
+          enddo
           exit
        endif
        T=>T%NEXT
