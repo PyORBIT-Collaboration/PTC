@@ -53,8 +53,14 @@ static PyObject* wrap_ptc_get_twiss_init_(PyObject *self, PyObject *args)
   double alphay;
   double etax;
   double etapx;
-  ptc_get_twiss_init_(&betax, &betay, &alphax, &alphay, &etax, &etapx);
-  return Py_BuildValue("(dddddd)", betax, betay, alphax, alphay, etax, etapx);
+  double etay;
+  double etapy;
+  double cox;
+  double copx;
+  double coy;
+  double copy;
+  ptc_get_twiss_init_(&betax, &betay, &alphax, &alphay, &etax, &etapx, &etay, &etapy, &cox, &copx, &coy, &copy);
+  return Py_BuildValue("(dddddddddddd)", betax, betay, alphax, alphay, etax, etapx, etay, etapy, cox, copx, coy, copy);
 }
 
 // Get number of PTC ORBIT nodes, harmonic number,
@@ -142,15 +148,21 @@ static PyObject* wrap_ptc_get_twiss_for_node_(PyObject *self, PyObject *args)
   double alphay;
   double etax;
   double etapx;
+  double etay;
+  double etapy;
+  double cox;
+  double copx;
+  double coy;
+  double copy;
   if(!PyArg_ParseTuple(args, "i:ptc_get_twiss_for_node_",
                        &node_index))
   {
     error("ptc_get_twiss_for_node_ - cannot parse arguments!");
   }
   ptc_get_twiss_for_node_(&node_index, &length, &betax, &betay,
-                          &alphax, &alphay, &etax, &etapx);
-  return Py_BuildValue("(ddddddd)", length,
-                       betax, betay, alphax, alphay, etax, etapx);
+                          &alphax, &alphay, &etax, &etapx, &etay, &etapy, &cox, &copx, &coy, &copy);
+  return Py_BuildValue("(ddddddddddddd)", length,
+                       betax, betay, alphax, alphay, etax, etapx, etay, etapy, cox, copx, coy, copy);
 }
 
 // Track 6D coordinates through a PTC-ORBIT node.

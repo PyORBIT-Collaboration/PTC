@@ -33,7 +33,10 @@ extern "C" void ptc_init_(const char* file_name, int length_of_name);
 
 extern "C" void ptc_get_twiss_init_(double* betax,  double* betay,
                                     double* alphax, double* alphay,
-                                    double* etax,   double* etapx);
+                                    double* etax,   double* etapx,
+                                    double* etay,   double* etapy,
+                                    double* cox,    double* copx,
+                                    double* coy,    double* copy);
 
 // Get number of PTC ORBIT nodes, harmonic number,
 //     length of the ring, and gamma transition
@@ -66,7 +69,10 @@ extern "C" void ptc_read_accel_table_(const char* file_name,
 extern "C" void ptc_get_twiss_for_node_(int* node_index, double* length,
                                         double* betax,   double* betay,
                                         double* alphax,  double* alphay,
-                                        double* etax,    double* etapx);
+                                        double* etax,    double* etapx,
+                                        double* etay,    double* etapy,
+                                        double* cox,    double* copx,
+	                                    double* coy,    double* copy);
 
 // Track 6D coordinates through a PTC-ORBIT node
 
