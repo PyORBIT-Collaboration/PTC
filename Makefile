@@ -1,7 +1,7 @@
-include ../../conf/make_root_config
+include $(ORBIT_ROOT)/conf/make_root_config
 
 #Fortran compiler
-FC=ifort
+FC=mpif90
 
 DIRS  = $(patsubst %/, %, $(filter %/, $(shell ls -F))))
 SRCS  = $(wildcard *.cc)
@@ -16,10 +16,10 @@ FORT_SRCS += $(foreach dir, $(FORT_DIRS), $(patsubst $(dir)/%.f90, %.f90, $(wild
 FORT_OBJS = $(patsubst %.f90, ./obj/%.o, $(FORT_SRCS))
 
 # Include files can be anywhere, we use only two levels
-UPPER_DIRS = $(filter-out test%, $(patsubst %/, %, $(filter %/, $(shell ls -F ../../src))))
-LOWER_DIRS = $(foreach dir, $(UPPER_DIRS), $(patsubst %/, ../../src/$(dir)/%, $(filter %/, $(shell ls -F ../../src/$(dir)))))
+UPPER_DIRS = $(filter-out test%, $(patsubst %/, %, $(filter %/, $(shell ls -F $(ORBIT_ROOT)/src))))
+LOWER_DIRS = $(foreach dir, $(UPPER_DIRS), $(patsubst %/, $(ORBIT_ROOT)/src/$(dir)/%, $(filter %/, $(shell ls -F $(ORBIT_ROOT)/src/$(dir)))))
 
-INCLUDES_LOCAL = $(patsubst %, -I../../src/%, $(UPPER_DIRS))
+INCLUDES_LOCAL = $(patsubst %, -I$(ORBIT_ROOT)/src/%, $(UPPER_DIRS))
 INCLUDES_LOCAL += $(filter-out %obj, $(patsubst %, -I%, $(LOWER_DIRS)))
 INCLUDES_LOCAL += $(patsubst %, -I./%, $(filter %/, $(shell ls -F ./)))
 INCLUDES_LOCAL += -I./
@@ -37,6 +37,10 @@ ifeq ($(FC),ifort)
   LIBS += -Lafs/cern.ch/sw/IntelSoftware/linux/x86_64/xe2013/composer_xe_2013_sp1.2.144/bin/intel64 -lifcore -lsvml
 endif
 ifeq ($(FC),gfortran)
+  LIBS += -L/usr/lib/gcc/x86_64-redhat-linux/4.4.4 -lgfortran
+endif
+
+ifeq ($(FC),mpif90)
   LIBS += -L/usr/lib/gcc/x86_64-redhat-linux/4.4.4 -lgfortran
 endif
 
@@ -75,13 +79,13 @@ ptc_orbit_lib = libptc_orbit.so
 #-------------------------------------------------------------------------------
 
 compile: $(OBJS_WRAP) $(FORT_OBJS) $(OBJS) $(INC)
-	$(CXX) -fPIC $(SHARED_LIB) $(LIBS) $(LINKFLAGS) -o ../../lib/$(ptc_orbit_lib) $(OBJS) $(FORT_OBJS)
+	$(CXX) -fPIC $(SHARED_LIB) $(LIBS) $(LINKFLAGS) -o $(ORBIT_ROOT)/lib/$(ptc_orbit_lib) $(OBJS) $(FORT_OBJS)
 	rm -rf ./*.mod
 
 clean:
 	rm -rf ./obj/*.o
 	rm -rf ./obj/*.os
-	rm -rf ../../lib/$(ptc_orbit_lib)
+	rm -rf $(ORBIT_ROOT)/lib/$(ptc_orbit_lib)
 	rm -rf ./*.mod
 	rm -rf ./source/*~
 
