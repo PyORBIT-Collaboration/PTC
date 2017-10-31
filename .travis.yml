@@ -1,0 +1,8 @@
+sudo: required
+language: cpp
+services: docker
+before_install:
+  - docker build -t ptc .
+script:
+  - docker run ptc  bash -c "source /pyORBIT/setupEnvironment.sh; cd examples/ptc_test_1/;./START.sh run1.py 2"
+  

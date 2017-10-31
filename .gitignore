@@ -1,0 +1,6 @@
+bin/pyORBIT
+**/*.pyc
+**/obj/*.o
+*.pyc
+*~
+*.o
