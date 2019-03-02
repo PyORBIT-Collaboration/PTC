@@ -72,7 +72,7 @@ extern "C" void ptc_get_twiss_for_node_(int* node_index, double* length,
                                         double* etax,    double* etapx,
                                         double* etay,    double* etapy,
                                         double* cox,    double* copx,
-	                                    double* coy,    double* copy);
+                                        double* coy,    double* copy);
 
 // Track 6D coordinates through a PTC-ORBIT node
 

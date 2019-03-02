@@ -1225,7 +1225,7 @@ contains
     TYPE(DAMAP) ID
     TYPE(NORMALFORM) NORM
     TYPE(REAL_8) Y(6)
-    REAL(DP) BET(2),ALF(2),ETA(2),ETAP(2)
+    REAL(DP) BET(2),ALF(2),ETA(2),ETAP(2), CO(2), COP(2)
     TYPE(ORBIT_NODE), pointer :: ORBIT_NODES(:)
     logical(lp) doit,cav
      integer mf,i1
@@ -1438,16 +1438,22 @@ close(mf)
     ETA(2)=Y(3).SUB.'00001'
     ETAP(1)=Y(2).SUB.'00001'
     ETAP(2)=Y(4).SUB.'00001'
+    CO(1)=Y(1).SUB.'0000'
+    CO(2)=Y(3).SUB.'0000'
+    COP(1)=Y(2).SUB.'0000'
+    COP(2)=Y(4).SUB.'0000'
 
     WRITE(6,*) "TWISS PARAMETERS AT THE ENTRANCE"
-    WRITE(6,*) "BETAS ", BET
-    WRITE(6,*) "ALPHAS ",ALF
-    WRITE(6,*) "ETAS ", ETA
-    WRITE(6,*) "ETAPS ", ETAP
+    WRITE(6,*) "BETAs ", BET
+    WRITE(6,*) "ALPHAs ",ALF
+    WRITE(6,*) "ETAs ", ETA
+    WRITE(6,*) "ETAPs ", ETAP
+    WRITE(6,*) "COs ", CO
+    WRITE(6,*) "COPs ", COP
     
     DO K=1,my_ORBIT_LATTICE%ORBIT_N_NODE
        CALL ORBIT_TRACK_NODE(K,Y,STATE)
-       CALL ORBIT_TRACK_NODE(K,CLOSED,STATE)
+       !CALL ORBIT_TRACK_NODE(K,CLOSED,STATE)
        BET(1)=(Y(1).SUB.'1')**2+(Y(1).SUB.'01')**2
        BET(2)=(Y(3).SUB.'001')**2+(Y(3).SUB.'0001')**2
        ALF(1)=-((Y(1).SUB.'1')*(Y(2).SUB.'1')+(Y(1).SUB.'01')*(Y(2).SUB.'01'))
@@ -1456,22 +1462,28 @@ close(mf)
        ETAP(1)=Y(2).SUB.'00001'
        ETA(2)=Y(3).SUB.'00001'
        ETAP(2)=Y(4).SUB.'00001'
+       CO(1)=Y(1).SUB.'0000'
+       CO(2)=Y(3).SUB.'0000'
+       COP(1)=Y(2).SUB.'0000'
+       COP(2)=Y(4).SUB.'0000'
        ORBIT_NODES(K)%LATTICE(2:3)=BET
        ORBIT_NODES(K)%LATTICE(4:5)=ALF
        ORBIT_NODES(K)%LATTICE(6)=ETA(1)
        ORBIT_NODES(K)%LATTICE(7)=ETAP(1)
        ORBIT_NODES(K)%LATTICE(8)=ETA(2)
        ORBIT_NODES(K)%LATTICE(9)=ETAP(2)
-       ORBIT_NODES(K)%LATTICE(10)=CLOSED(1)
-       ORBIT_NODES(K)%LATTICE(11)=CLOSED(2)
-       ORBIT_NODES(K)%LATTICE(12)=CLOSED(3)
-       ORBIT_NODES(K)%LATTICE(13)=CLOSED(4)
+       ORBIT_NODES(K)%LATTICE(10)=CO(1)
+       ORBIT_NODES(K)%LATTICE(11)=COP(1)
+       ORBIT_NODES(K)%LATTICE(12)=CO(2)
+       ORBIT_NODES(K)%LATTICE(13)=COP(2)
     ENDDO
     WRITE(6,*) "TWISS PARAMETERS AT THE EXIT"
-    WRITE(6,*) "BETAS ", BET
-    WRITE(6,*) "ALPHAS ",ALF
-    WRITE(6,*) "ETAS ", ETA
-    WRITE(6,*) "ETAPS ", ETAP
+    WRITE(6,*) "BETAs ", BET
+    WRITE(6,*) "ALPHAs ",ALF
+    WRITE(6,*) "ETAs ", ETA
+    WRITE(6,*) "ETAPs ", ETAP
+    WRITE(6,*) "COs ", CO
+    WRITE(6,*) "COPs ", COP
 
 
     my_ORBIT_LATTICE%ORBIT_L=r%t%end%s(1)
@@ -1527,7 +1539,7 @@ close(mf)
     TYPE(DAMAP) ID
     TYPE(NORMALFORM) NORM
     TYPE(REAL_8) Y(6)
-    REAL(DP) BET(2),ALF(2),ETA(2),ETAP(2)
+    REAL(DP) BET(2),ALF(2),ETA(2),ETAP(2), CO(2), COP(2)
     TYPE(ORBIT_NODE), pointer :: ORBIT_NODES(:)
 
     
@@ -1559,15 +1571,21 @@ close(mf)
     ALF(2)=-((Y(3).SUB.'001')*(Y(4).SUB.'001')+(Y(3).SUB.'0001')*(Y(4).SUB.'0001'))
     ETA(1)=Y(1).SUB.'00001'
     ETAP(1)=Y(2).SUB.'00001'
-    
+    CO(1)=Y(1).SUB.'0000'
+    CO(2)=Y(3).SUB.'0000'
+    COP(1)=Y(2).SUB.'0000'
+    COP(2)=Y(4).SUB.'0000'
+
     WRITE(6,*) "TWISS PARAMETERS AT THE ENTRANCE"
-    WRITE(6,*) "BETAS ", BET
-    WRITE(6,*) "ALPHAS ",ALF
-    WRITE(6,*) "ETAS ", ETA
-    WRITE(6,*) "ETAPS ", ETAP
+    WRITE(6,*) "BETAs ", BET
+    WRITE(6,*) "ALPHAs ",ALF
+    WRITE(6,*) "ETAs ", ETA
+    WRITE(6,*) "ETAPs ", ETAP
+    WRITE(6,*) "COs ", CO
+    WRITE(6,*) "COPs ", COP
+
     DO K=1,my_ORBIT_LATTICE%ORBIT_N_NODE
        CALL ORBIT_TRACK_NODE(K,Y,STATE)
-       CALL ORBIT_TRACK_NODE(K,CLOSED,STATE)
        BET(1)=(Y(1).SUB.'1')**2+(Y(1).SUB.'01')**2
        BET(2)=(Y(3).SUB.'001')**2+(Y(3).SUB.'0001')**2
        ALF(1)=-((Y(1).SUB.'1')*(Y(2).SUB.'1')+(Y(1).SUB.'01')*(Y(2).SUB.'01'))
@@ -1576,23 +1594,29 @@ close(mf)
        ETA(2)=Y(3).SUB.'00001'
        ETAP(1)=Y(2).SUB.'00001'
        ETAP(2)=Y(4).SUB.'00001'
+       CO(1)=Y(1).SUB.'0000'
+       CO(2)=Y(3).SUB.'0000'
+       COP(1)=Y(2).SUB.'0000'
+       COP(2)=Y(4).SUB.'0000'
        ORBIT_NODES(K)%LATTICE(2:3)=BET
        ORBIT_NODES(K)%LATTICE(4:5)=ALF
        ORBIT_NODES(K)%LATTICE(6)=ETA(1)
        ORBIT_NODES(K)%LATTICE(7)=ETAP(1)
        ORBIT_NODES(K)%LATTICE(8)=ETA(2)
        ORBIT_NODES(K)%LATTICE(9)=ETAP(2)
-       ORBIT_NODES(K)%LATTICE(10)=CLOSED(1)
-       ORBIT_NODES(K)%LATTICE(11)=CLOSED(2)
-       ORBIT_NODES(K)%LATTICE(12)=CLOSED(3)
-       ORBIT_NODES(K)%LATTICE(13)=CLOSED(4)
+       ORBIT_NODES(K)%LATTICE(10)=CO(1)
+       ORBIT_NODES(K)%LATTICE(11)=COP(1)
+       ORBIT_NODES(K)%LATTICE(12)=CO(2)
+       ORBIT_NODES(K)%LATTICE(13)=COP(2)
     ENDDO
     WRITE(6,*) "TWISS PARAMETERS AT THE EXIT"
-    WRITE(6,*) "BETAS ", BET
-    WRITE(6,*) "ALPHAS ",ALF
-    WRITE(6,*) "ETAS ", ETA
-    WRITE(6,*) "ETAPS ", ETAP
-    
+    WRITE(6,*) "BETAs ", BET
+    WRITE(6,*) "ALPHAs ",ALF
+    WRITE(6,*) "ETAs ", ETA
+    WRITE(6,*) "ETAPs ", ETAP
+    WRITE(6,*) "COs ", CO
+    WRITE(6,*) "COPs ", COP
+
     my_ORBIT_LATTICE%ORBIT_USE_ORBIT_UNITS=my_true
  
     end SUBROUTINE update_twiss_for_orbit 
