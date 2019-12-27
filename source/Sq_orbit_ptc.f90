@@ -1534,13 +1534,13 @@ contains
     COP(1)=Y(2).SUB.'0000'
     COP(2)=Y(4).SUB.'0000'
 
-    WRITE(6,*) "TWISS PARAMETERS AT THE ENTRANCE"
-    WRITE(6,*) "BETAs ", BET
-    WRITE(6,*) "ALPHAs ",ALF
-    WRITE(6,*) "ETAs ", ETA
-    WRITE(6,*) "ETAPs ", ETAP
-    WRITE(6,*) "COs ", CO
-    WRITE(6,*) "COPs ", COP
+    !! WRITE(6,*) "TWISS PARAMETERS AT THE ENTRANCE"
+    !! WRITE(6,*) "BETAs ", BET
+    !! WRITE(6,*) "ALPHAs ",ALF
+    !! WRITE(6,*) "ETAs ", ETA
+    !! WRITE(6,*) "ETAPs ", ETAP
+    !! WRITE(6,*) "COs ", CO
+    !! WRITE(6,*) "COPs ", COP
 
     DO K=1,my_ORBIT_LATTICE%ORBIT_N_NODE
        CALL ORBIT_TRACK_NODE(K,Y,STATE)
@@ -1567,13 +1567,13 @@ contains
        ORBIT_NODES(K)%LATTICE(12)=CO(2)
        ORBIT_NODES(K)%LATTICE(13)=COP(2)
     ENDDO
-    WRITE(6,*) "TWISS PARAMETERS AT THE EXIT"
-    WRITE(6,*) "BETAs ", BET
-    WRITE(6,*) "ALPHAs ",ALF
-    WRITE(6,*) "ETAs ", ETA
-    WRITE(6,*) "ETAPs ", ETAP
-    WRITE(6,*) "COs ", CO
-    WRITE(6,*) "COPs ", COP
+    !! WRITE(6,*) "TWISS PARAMETERS AT THE EXIT"
+    !! WRITE(6,*) "BETAs ", BET
+    !! WRITE(6,*) "ALPHAs ",ALF
+    !! WRITE(6,*) "ETAs ", ETA
+    !! WRITE(6,*) "ETAPs ", ETAP
+    !! WRITE(6,*) "COs ", CO
+    !! WRITE(6,*) "COPs ", COP
 
     my_ORBIT_LATTICE%ORBIT_USE_ORBIT_UNITS=my_true
  

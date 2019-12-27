@@ -128,4 +128,12 @@ extern "C" void  ptc_get_kinetic_(double* X);
 void ptc_trackBunch(Bunch* bunch, double ZtoPhi,
                     int &orbit_ptc_node_index);
 
+
+//===================================================
+// This recalculates the PTC TWISS
+//===================================================
+
+extern "C" void  ptc_update_twiss_();
+
+
 #endif  // PTC_C_INTERFACE_H

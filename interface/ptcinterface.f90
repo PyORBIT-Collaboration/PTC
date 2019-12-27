@@ -237,6 +237,14 @@ CAVITY_TOTALPATH=0
 
    END SUBROUTINE ptc_get_kinetic
 
+!===========================================================
+! This subroutine updates the TWISS
+!===========================================================
+  SUBROUTINE PTC_UPDATE_TWISS
+    use orbit_ptc
+    call UPDATE_TWISS_FOR_ORBIT
+  END SUBROUTINE PTC_UPDATE_TWISS
+
 !===================================================
 !It reads the acceleration table into the ptc code
 !===================================================
