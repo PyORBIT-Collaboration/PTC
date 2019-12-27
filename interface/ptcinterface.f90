@@ -222,6 +222,42 @@ CAVITY_TOTALPATH=0
    END SUBROUTINE ptc_get_omega
 
 !===================================================
+!It returns P0C
+!===================================================
+   SUBROUTINE ptc_get_p0c(x)
+     
+     USE orbit_ptc
+     IMPLICIT NONE
+     REAL(DP) x
+     call GET_P0C(x)
+
+   END SUBROUTINE ptc_get_p0c
+
+!===================================================
+!It returns BETA0
+!===================================================
+   SUBROUTINE ptc_get_beta0(x)
+     
+     USE orbit_ptc
+     IMPLICIT NONE
+     REAL(DP) x
+     call GET_BETA0(x)
+
+   END SUBROUTINE ptc_get_beta0
+
+!===================================================
+!It returns E_kin
+!===================================================
+   SUBROUTINE ptc_get_kinetic(x)
+     
+     USE orbit_ptc
+     IMPLICIT NONE
+     REAL(DP) x
+     call GET_kinetic(x)
+
+   END SUBROUTINE ptc_get_kinetic
+
+!===================================================
 !It reads the acceleration table into the ptc code
 !===================================================
    subroutine ptc_read_accel_table(p_in_file)

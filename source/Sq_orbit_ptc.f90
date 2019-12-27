@@ -427,17 +427,17 @@ contains
     REAL(DP),  INTENT(INOUT) :: X(6)
     INTEGER K,I
     LOGICAL(LP) U,cav
-    REAL(DP) X5,dt,dt_orbit_sync
+    REAL(DP) dt,dt_orbit_sync !,X5
     TYPE(INTEGRATION_NODE), POINTER  :: T
     TYPE(INTERNAL_STATE), target, OPTIONAL :: STATE
     TYPE(INTERNAL_STATE), pointer :: STATE0
-
-    IF(my_ORBIT_LATTICE%ORBIT_USE_ORBIT_UNITS) THEN
-       x(1:4)=x(1:4)*1.e-3_dp
-       X5=X(5)
-       X(5)=X(6)/my_ORBIT_LATTICE%ORBIT_P0C
-       X(6)=X5/my_ORBIT_LATTICE%ORBIT_OMEGA
-    ENDIF
+    
+    !IF(my_ORBIT_LATTICE%ORBIT_USE_ORBIT_UNITS) THEN
+    !   !x(1:4)=x(1:4)*1.e-3_dp
+    !   X5=X(5)
+    !   X(5)=X(6)!/my_ORBIT_LATTICE%ORBIT_P0C
+    !   X(6)=X5!/my_ORBIT_LATTICE%ORBIT_OMEGA
+    !ENDIF
 
     u=my_false
 
@@ -548,13 +548,13 @@ contains
        T=>T%NEXT
     ENDDO
     first_particle=.false.
-
-    IF(my_ORBIT_LATTICE%ORBIT_USE_ORBIT_UNITS) THEN
-       x(1:4)=x(1:4)*1.e3_dp
-       X5=X(5)
-       X(5)=X(6)*my_ORBIT_LATTICE%ORBIT_OMEGA
-       X(6)=X5*my_ORBIT_LATTICE%ORBIT_P0C
-    ENDIF
+    
+    !IF(my_ORBIT_LATTICE%ORBIT_USE_ORBIT_UNITS) THEN
+    !   !x(1:4)=x(1:4)*1.e3_dp
+    !   X5=X(5)
+    !   X(5)=X(6)!*my_ORBIT_LATTICE%ORBIT_OMEGA
+    !   X(6)=X5!*my_ORBIT_LATTICE%ORBIT_P0C
+    !ENDIF
 
   end SUBROUTINE ORBIT_TRACK_NODE_Standard_R
 
@@ -679,7 +679,7 @@ contains
     real(dp),intent(inout) :: x(6)
     TYPE(INTEGRATION_NODE), POINTER  :: T
     type(acceleration), pointer :: a
-
+    
     a=>t%parent_fibre%mag%c4%acc
 
     X(2)=X(2)*a%w1%P0C/a%w2%P0C
@@ -1117,19 +1117,19 @@ contains
     type(real_8),  INTENT(INOUT) :: X(6)
     INTEGER K,I,j
     LOGICAL(LP) U
-    type(real_8) X5
+    !type(real_8) X5
     TYPE(INTEGRATION_NODE), POINTER  :: T
     TYPE(INTERNAL_STATE), OPTIONAL :: STATE
 
-    IF(my_ORBIT_LATTICE%ORBIT_USE_ORBIT_UNITS) THEN
-       call alloc(x5)
-       do i=1,4
-          x(i)=x(i)*1.e-3_dp
-       enddo
-       X5=X(5)
-       X(5)=X(6)/my_ORBIT_LATTICE%ORBIT_P0C
-       X(6)=X5/my_ORBIT_LATTICE%ORBIT_OMEGA
-    ENDIF
+    !IF(my_ORBIT_LATTICE%ORBIT_USE_ORBIT_UNITS) THEN
+    !   call alloc(x5)
+    !   do i=1,4
+    !      x(i)=x(i)*1.e-3_dp
+    !   enddo
+    !   X5=X(5)
+    !   X(5)=X(6)/my_ORBIT_LATTICE%ORBIT_P0C
+    !   X(6)=X5/my_ORBIT_LATTICE%ORBIT_OMEGA
+    !ENDIF
 
 
     u=my_false
@@ -1168,16 +1168,16 @@ contains
     ENDDO
     !    ENDIF
 
-    IF(my_ORBIT_LATTICE%ORBIT_USE_ORBIT_UNITS) THEN
-       do i=1,4
-          x(i)=x(i)*1.e3_dp
-       enddo
-       X5=X(5)
-       X(5)=X(6)*my_ORBIT_LATTICE%ORBIT_OMEGA
-       X(6)=X5*my_ORBIT_LATTICE%ORBIT_P0C
-       call kill(x5)
+    !IF(my_ORBIT_LATTICE%ORBIT_USE_ORBIT_UNITS) THEN
+    !   do i=1,4
+    !      x(i)=x(i)*1.e3_dp
+    !   enddo
+    !   X5=X(5)
+    !   X(5)=X(6)*my_ORBIT_LATTICE%ORBIT_OMEGA
+    !   X(6)=X5*my_ORBIT_LATTICE%ORBIT_P0C
+    !   call kill(x5)
 
-    ENDIF
+    !ENDIF
 
   end SUBROUTINE ORBIT_TRACK_NODEP
 

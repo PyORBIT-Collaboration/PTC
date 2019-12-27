@@ -103,6 +103,24 @@ extern "C" void ptc_get_task_type_(int* i_node, int* i_task);
 extern "C" void  ptc_get_omega_(double* X);
 
 //===================================================
+// It returns P0C
+//===================================================
+
+extern "C" void  ptc_get_p0c_(double* X);
+
+//===================================================
+// It returns BETA0
+//===================================================
+
+extern "C" void  ptc_get_beta0_(double* X);
+
+//===================================================
+// It returns kinetic energy
+//===================================================
+
+extern "C" void  ptc_get_kinetic_(double* X);
+
+//===================================================
 // Method to track a bunch of particles using
 // ptc_track_particle_
 //===================================================
