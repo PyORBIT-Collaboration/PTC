@@ -427,18 +427,11 @@ contains
     REAL(DP),  INTENT(INOUT) :: X(6)
     INTEGER K,I
     LOGICAL(LP) U,cav
-    REAL(DP) dt,dt_orbit_sync !,X5
+    REAL(DP) dt,dt_orbit_sync
     TYPE(INTEGRATION_NODE), POINTER  :: T
     TYPE(INTERNAL_STATE), target, OPTIONAL :: STATE
     TYPE(INTERNAL_STATE), pointer :: STATE0
     
-    !IF(my_ORBIT_LATTICE%ORBIT_USE_ORBIT_UNITS) THEN
-    !   !x(1:4)=x(1:4)*1.e-3_dp
-    !   X5=X(5)
-    !   X(5)=X(6)!/my_ORBIT_LATTICE%ORBIT_P0C
-    !   X(6)=X5!/my_ORBIT_LATTICE%ORBIT_OMEGA
-    !ENDIF
-
     u=my_false
 
     T=>my_ORBIT_LATTICE%ORBIT_NODES(K)%NODE
@@ -549,13 +542,6 @@ contains
     ENDDO
     first_particle=.false.
     
-    !IF(my_ORBIT_LATTICE%ORBIT_USE_ORBIT_UNITS) THEN
-    !   !x(1:4)=x(1:4)*1.e3_dp
-    !   X5=X(5)
-    !   X(5)=X(6)!*my_ORBIT_LATTICE%ORBIT_OMEGA
-    !   X(6)=X5!*my_ORBIT_LATTICE%ORBIT_P0C
-    !ENDIF
-
   end SUBROUTINE ORBIT_TRACK_NODE_Standard_R
 
 
@@ -1117,19 +1103,8 @@ contains
     type(real_8),  INTENT(INOUT) :: X(6)
     INTEGER K,I,j
     LOGICAL(LP) U
-    !type(real_8) X5
     TYPE(INTEGRATION_NODE), POINTER  :: T
     TYPE(INTERNAL_STATE), OPTIONAL :: STATE
-
-    !IF(my_ORBIT_LATTICE%ORBIT_USE_ORBIT_UNITS) THEN
-    !   call alloc(x5)
-    !   do i=1,4
-    !      x(i)=x(i)*1.e-3_dp
-    !   enddo
-    !   X5=X(5)
-    !   X(5)=X(6)/my_ORBIT_LATTICE%ORBIT_P0C
-    !   X(6)=X5/my_ORBIT_LATTICE%ORBIT_OMEGA
-    !ENDIF
 
 
     u=my_false
@@ -1167,17 +1142,6 @@ contains
        T=>T%NEXT
     ENDDO
     !    ENDIF
-
-    !IF(my_ORBIT_LATTICE%ORBIT_USE_ORBIT_UNITS) THEN
-    !   do i=1,4
-    !      x(i)=x(i)*1.e3_dp
-    !   enddo
-    !   X5=X(5)
-    !   X(5)=X(6)*my_ORBIT_LATTICE%ORBIT_OMEGA
-    !   X(6)=X5*my_ORBIT_LATTICE%ORBIT_P0C
-    !   call kill(x5)
-
-    !ENDIF
 
   end SUBROUTINE ORBIT_TRACK_NODEP
 
