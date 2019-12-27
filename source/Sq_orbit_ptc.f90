@@ -1587,27 +1587,27 @@ close(mf)
 
 end module orbit_ptc
 
-subroutine ptc_track_particle(node_index, x,xp,y,yp,phi,dE)
+subroutine ptc_track_particle(node_index, x,xp,y,yp,pt,ct)
 
   USE orbit_ptc
   IMPLICIT NONE
-  REAL(DP) x,xp,y,yp,phi,dE
+  REAL(DP) x,xp,y,yp,pt,ct
   INTEGER node_index
   INTEGER i
 
   i = node_index + 1
 
 
-  call PUT_RAY(x,xp,y,yp,phi,dE)
+  call PUT_RAY(x,xp,y,yp,pt,ct)
 
   call TRACK_ONE_NODE(i)
 
-  call GET_RAY(x,xp,y,yp,phi,dE)
+  call GET_RAY(x,xp,y,yp,pt,ct)
 
   IF(I==1.AND.MF_HERD/=0) THEN
-     WRITE(MF_HERD,'(4(1X,E15.8))') PHI,DE,my_ORBIT_LATTICE%orbit_p0c, &
+     WRITE(MF_HERD,'(4(1X,E15.8))') ct,pt,my_ORBIT_LATTICE%orbit_p0c, &
           x_orbit_sync(5)/my_ORBIT_LATTICE%ORBIT_OMEGA/clight*1e3_dp
-     !       WRITE(MF_HERD,'(6(1X,E15.8))') PHI,DE,X_ORBIT(6),X_ORBIT(5), &
+     !       WRITE(MF_HERD,'(6(1X,E15.8))') ct,pt,X_ORBIT(6),X_ORBIT(5), &
      !x_orbit_sync(5)/my_ORBIT_LATTICE%ORBIT_OMEGA/clight*1000.d0,my_ORBIT_LATTICE%ORBIT_OMEGA
      !        ,my_ORBIT_LATTICE%ORBIT_P0C
   ENDIF

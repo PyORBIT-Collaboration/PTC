@@ -79,7 +79,7 @@ extern "C" void ptc_get_twiss_for_node_(int* node_index, double* length,
 extern "C" void ptc_track_particle_(int* node_index,
                                     double* x,   double* xp,
                                     double* y,   double* yp,
-                                    double* phi, double* dE);
+                                    double* pt, double* ct);
 
 // Reads additional ptc commands from file and executes them inside ptc
 
